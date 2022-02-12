@@ -18,14 +18,14 @@ export function updatePassword(data: any) {
 
 export function getInfo() {
   return request<API.AdminUserInfo>({
-    url: 'account/info',
+    url: 'user/info',
     method: 'get',
   });
 }
 
 export function permmenu() {
   return request<API.PermMenu>({
-    url: 'account/permmenu',
+    url: 'menus',
     method: 'get',
   });
 }

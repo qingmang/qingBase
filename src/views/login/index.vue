@@ -7,8 +7,10 @@
     </div>
     <a-form layout="horizontal" :model="state.formInline" @submit.prevent="handleSubmit">
       <a-form-item>
-        <a-input v-model:value="state.formInline.username" size="large" placeholder="rootadmin">
-          <template #prefix><user-outlined type="user" /></template>
+        <a-input v-model:value="state.formInline.username" size="large" placeholder="admin">
+          <template #prefix>
+            <user-outlined type="user" />
+          </template>
         </a-input>
       </a-form-item>
       <a-form-item>
@@ -19,30 +21,16 @@
           placeholder="123456"
           autocomplete="new-password"
         >
-          <template #prefix><lock-outlined type="user" /></template>
-        </a-input>
-      </a-form-item>
-      <a-form-item>
-        <a-input
-          v-model:value="state.formInline.verifyCode"
-          placeholder="验证码"
-          :maxlength="4"
-          size="large"
-        >
-          <template #prefix><SafetyOutlined /></template>
-          <template #suffix>
-            <img
-              :src="state.captcha"
-              class="absolute right-0 h-full cursor-pointer"
-              @click="setCaptcha"
-            />
+          <template #prefix>
+            <lock-outlined type="user" />
           </template>
         </a-input>
       </a-form-item>
+
       <a-form-item>
-        <a-button type="primary" html-type="submit" size="large" :loading="state.loading" block>
-          登录
-        </a-button>
+        <a-button type="primary" html-type="submit" size="large" :loading="state.loading" block
+          >登录</a-button
+        >
       </a-form-item>
     </a-form>
   </div>
@@ -51,9 +39,8 @@
 <script setup lang="ts">
   import { reactive } from 'vue';
   import { message, Modal } from 'ant-design-vue';
-  import { UserOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons-vue';
+  import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
   import { useUserStore } from '@/store/modules/user';
-  import { getImageCaptcha } from '@/api/login';
   import { SvgIcon } from '@/components/basic/svg-icon';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -63,8 +50,6 @@
     formInline: {
       username: '',
       password: '',
-      verifyCode: '',
-      captchaId: '',
     },
   });
 
@@ -73,21 +58,12 @@
 
   const userStore = useUserStore();
 
-  const setCaptcha = async () => {
-    const { id, img } = await getImageCaptcha({ width: 100, height: 50 });
-    state.captcha = img;
-    state.formInline.captchaId = id;
-  };
-  setCaptcha();
-
   const handleSubmit = async () => {
-    const { username, password, verifyCode } = state.formInline;
+    const { username, password } = state.formInline;
     if (username.trim() == '' || password.trim() == '') {
       return message.warning('用户名或密码不能为空！');
     }
-    if (!verifyCode) {
-      return message.warning('请输入验证码！');
-    }
+
     message.loading('登录中...', 0);
     state.loading = true;
     console.log(state.formInline);
@@ -104,7 +80,6 @@
         title: () => '提示',
         content: () => error.message,
       });
-      setCaptcha();
     }
   };
 </script>
